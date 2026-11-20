@@ -1,0 +1,7 @@
+Nom : Bleou
+Prenom : Kessin
+Date et heure : 20/11/2026 16:06:45
+Contenu de XYZ.txt :
+Bonjour, ceci est le fichier XYZ du DS R5.07.
+
+Taille de XYZ.txt : 46 octets
