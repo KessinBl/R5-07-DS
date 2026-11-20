@@ -1,0 +1,59 @@
+
+name: Q6
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Creer archive et differences
+        run: |
+          DATE=$(date +%d-%m-%Y-%H%M%S)
+          FICHIER="Q6_archive_${DATE}.txt"
+
+          PRECEDENT=$(find . -maxdepth 1 \
+            -name 'Q6_archive_*.txt' \
+            -printf '%f\n' | sort | tail -n 1)
+
+          echo "Nom : Kessin" > "$FICHIER"
+          echo "Prenom : Bleou" >> "$FICHIER"
+          echo "Fichier Q6.java :" >> "$FICHIER"
+          cat Q6.java >> "$FICHIER"
+
+          echo "" >> "$FICHIER"
+          echo "Nombre de caracteres :" >> "$FICHIER"
+          wc -m < Q6.java >> "$FICHIER"
+
+          echo "Nombre de lignes :" >> "$FICHIER"
+          wc -l < Q6.java >> "$FICHIER"
+
+          if [ -n "$PRECEDENT" ]; then
+            diff -u "$PRECEDENT" "$FICHIER" \
+              > Q6_différences.txt || true
+          else
+            echo "Aucune archive precedente" \
+              > Q6_différences.txt
+          fi
+
+      - name: Pousser les fichiers
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add Q6_archive_*.txt Q6_différences.txt
+
+          git diff --cached --quiet || (
+            git commit -m "Archive et differences Q6" &&
+            git push
+          )
