@@ -1,0 +1,32 @@
+
+name: Q1
+
+on:
+  push:
+    paths:
+      - "XYZ.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v4
+
+      - name: Creer l'archive
+        run: cp XYZ.txt Q1_archive_XYZ.txt
+
+      - name: Pousser l'archive
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Q1_archive_XYZ.txt
+          if ! git diff --cached --quiet; then
+            git commit -m "Q1 : creation archive XYZ"
+            git push
+          fi
